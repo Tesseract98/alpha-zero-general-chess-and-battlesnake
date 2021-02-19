@@ -1,10 +1,10 @@
 """Useful utils
 """
-from .misc import *
-from .logger import *
-from .eval import *
+import os
+import sys
 
-# progress bar
-import os, sys
+from .eval import *
+from .logger import *
+from .misc import *
+
 sys.path.append(os.path.join(os.path.dirname(__file__), "progress"))
-from progress.bar import Bar as Bar

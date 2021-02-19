@@ -7,6 +7,7 @@ from logging import getLogger
 
 logger = getLogger(__name__)
 
+
 class Player(enum.Enum):
     black = 1
     white = 2
@@ -21,6 +22,7 @@ Winner = enum.Enum("Winner", "BLACK WHITE DRAW")
 pieces_order = 'KQRBNPkqrbnp'
 
 pieces = {pieces_order[i]: i for i in range(12)}
+
 
 # print(pieces)
 
@@ -128,9 +130,7 @@ class MyChessEnv:
 
     def undo(self):
         self.board.pop()
-        self.moves_count -=1
-
-
+        self.moves_count -= 1
 
 
 def is_black_turn(fen):
@@ -168,10 +168,10 @@ def position_evaluation_simple(fen, absolute=False) -> float:
             continue
         if c.isupper():
             player_points += piece_vals[c]
-            count+=1
+            count += 1
         else:
             player_points -= piece_vals[c.upper()]
-            count+=1
+            count += 1
 
     if is_black_turn(fen):
         return -1 * player_points
@@ -183,7 +183,7 @@ def reverseArray(inputArray):
     return inputArray[::-1];
 
 
-pawnEvalWhite =[
+pawnEvalWhite = [
     [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
     [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0],
     [1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0],
@@ -196,7 +196,7 @@ pawnEvalWhite =[
 
 pawnEvalBlack = reverseArray(pawnEvalWhite);
 
-knightEval =[
+knightEval = [
     [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0],
     [-4.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0, -4.0],
     [-3.0, 0.0, 1.0, 1.5, 1.5, 1.0, 0.0, -3.0],
@@ -255,7 +255,6 @@ kingEvalWhite = [
     [2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0],
     [2.0, 3.0, 1.0, 0.0, 0.0, 1.0, 3.0, 2.0]
 ];
-
 
 kingEvalBlack = reverseArray(kingEvalWhite);
 

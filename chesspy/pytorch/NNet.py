@@ -9,8 +9,9 @@ import sys
 
 sys.path.append('../../')
 from utils import *
-from pytorch_classification.utils import Bar, AverageMeter
+from pytorch_classification.utils import AverageMeter
 from NeuralNet import NeuralNet
+from progress.bar import Bar
 
 import argparse
 import torch
@@ -24,7 +25,7 @@ from .ChessNNet import ChessNNet as onnet
 args = dotdict({
     'lr': 0.0005,
     'dropout': 0.1,
-    'epochs': 10,
+    'epochs': 2,
     'batch_size': 64,
     'cuda': torch.cuda.is_available(),
     'num_channels': 128, #512 need 7.88 GB RAM free in GPU

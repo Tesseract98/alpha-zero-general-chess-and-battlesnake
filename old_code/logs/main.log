@@ -13514,3 +13514,5 @@
 2020-02-13 09:11:00,606@root WARNING # Limited tf.summary API due to missing TensorBoard installation.
 2020-02-13 09:11:00,748@chess_zero.agent.model_chess DEBUG # loading model from C:\Users\Sunil Kumar\Documents\GitHub\Master's-thesis\project_code\data\model\model_best_config.json
 2020-02-13 09:11:04,431@chess_zero.agent.model_chess DEBUG # loaded model digest = 3927564126867c2b906942a273e2f3db254220e3403a5721b2ac01b52b2c2d41
+2021-02-13 14:37:38,815@chess_zero.manager INFO # config type: normal
+2021-02-13 14:38:31,653@chess_zero.manager INFO # config type: normal

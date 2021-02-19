@@ -65,6 +65,7 @@ class ChessGame(Game):
         Returns:
             nextBoard: board after applying action
             nextPlayer: player who plays in the next turn (should be -player)
+            move: action
         """
         # TODO remove assert not required part for speed
         assert libPlayerToChessPlayer(board.turn) == player
@@ -72,14 +73,14 @@ class ChessGame(Game):
         if not board.turn:  # black move from CanonicalForm
             move = str(mirror_action(chess.Move.from_uci(move)))
 
-        if move not in getAllowedMovesFromBoard(board): # must be a pawn promotion
+        if move not in getAllowedMovesFromBoard(board):  # must be a pawn promotion
             # print(board)
             # print(move, " is not valid - ",self.all_possible_moves[action])
-            move=move+self.all_possible_moves[action][-1:]
+            move = move + self.all_possible_moves[action][-1:]
             # print("moveupdated:",move)
         board = board.copy()
         board.push(chess.Move.from_uci(move))
-        return (board, -player)
+        return (board, -player, move)
 
     def getValidMoves(self, board, player):
         """
@@ -180,6 +181,26 @@ class ChessGame(Game):
         fen = board.fen()
         fen = maybe_flip_fen(fen, is_black_turn(fen))
         return all_input_planes(fen)
+
+    def make_move(self, board, player, action):
+        """
+        Input:
+            board: current board
+            player: current player (1 or -1)
+            action: action taken by current player
+
+        Returns:
+            uci move
+        """
+        # TODO remove assert not required part for speed
+        assert libPlayerToChessPlayer(board.turn) == player
+        move = self.all_possible_moves[action]
+        if not board.turn:  # black move from CanonicalForm
+            move = str(mirror_action(chess.Move.from_uci(move)))
+
+        if move not in getAllowedMovesFromBoard(board):  # must be a pawn promotion
+            move = move + self.all_possible_moves[action][-1:]
+        return move
 
 
 def mirror_action(action):

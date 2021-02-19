@@ -1,7 +1,8 @@
 import chess
 import random
 import numpy as np
-from chesspy.ChessGame import libPlayerToChessPlayer, from_move, mirror_move
+from chesspy.ChessGame import libPlayerToChessPlayer
+
 
 # code taken from https://github.com/namin/alpha-zero-general/tree/_chess
 
@@ -11,8 +12,9 @@ class RandomPlayer():
 
     def play(self, board):
         valids = self.game.getValidMoves(board, libPlayerToChessPlayer(board.turn))
-        moves = np.argwhere(valids==1)
+        moves = np.argwhere(valids == 1)
         return random.choice(moves)[0]
+
 
 def move_from_uci(board, uci):
     try:
@@ -24,6 +26,7 @@ def move_from_uci(board, uci):
         print('expected a valid move')
         return None
     return move
+
 
 class HumanChessPlayer():
     def __init__(self, game):
@@ -39,8 +42,9 @@ class HumanChessPlayer():
             print('try again, e.g., %s' % random.choice(list(mboard.legal_moves)).uci())
             return self.play(board)
         if board.turn:
-            move = mirror_move(move)
-        return from_move(move)
+            move = move
+        return move
+
 
 class StrategicChessPlayer():
     def __init__(self, game, strategy):
@@ -52,8 +56,9 @@ class StrategicChessPlayer():
             mboard = board.mirror()
         move = self.strategy(mboard)
         if board.turn:
-            move = mirror_move(move)
-        return from_move(move)
+            move = move
+        return move
+
 
 MIN_SCORE = -1000
 MAX_SCORE = -MIN_SCORE
@@ -65,6 +70,7 @@ piece_values = {chess.KING: 0,
                 chess.ROOK: 5,
                 chess.QUEEN: 9}
 
+
 def evaluate_board(board):
     score = 0
     for piece in board.piece_map().values():
@@ -74,11 +80,13 @@ def evaluate_board(board):
     score -= 100 if board.is_checkmate() else 0
     return score
 
+
 def evaluate_move(move, board, evaluate_board):
     board.push(move)
     score = -evaluate_board(board)
     board.pop()
     return score
+
 
 def evaluation_strategy(board, evaluate_move):
     best_moves = []
@@ -86,17 +94,20 @@ def evaluation_strategy(board, evaluate_move):
     for move in board.legal_moves:
         score = evaluate_move(move, board)
         if score > best_score:
-           best_score = score
-           best_moves = [move]
+            best_score = score
+            best_moves = [move]
         elif score == best_score:
-           best_moves.append(move)
+            best_moves.append(move)
     return random.choice(best_moves)
+
 
 def static_evaluate_move(move, board):
     return evaluate_move(move, board, evaluate_board)
 
+
 def static_strategy(board):
     return evaluation_strategy(board, static_evaluate_move)
+
 
 class StaticChessPlayer(StrategicChessPlayer):
     def __init__(self, game):
