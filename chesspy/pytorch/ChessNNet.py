@@ -1,14 +1,10 @@
 import sys
 sys.path.append('..')
-from utils import *
 
-import argparse
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
-from torchvision import datasets, transforms
-from torch.autograd import Variable
+
 
 class ChessNNet(nn.Module):
     def __init__(self, game, args):
@@ -28,15 +24,17 @@ class ChessNNet(nn.Module):
         self.bn3 = nn.BatchNorm3d(args.num_channels)
         self.bn4 = nn.BatchNorm3d(args.num_channels)
 
-        self.fc1 = nn.Linear(args.num_channels*(self.board_x-4)*(self.board_y-4)*(self.board_z-4), 18*1024)
-        self.fc_bn1 = nn.BatchNorm1d(18*1024)
+        n = 128
+        l = 256
+        self.fc1 = nn.Linear(args.num_channels*(self.board_x-4)*(self.board_y-4)*(self.board_z-4), 18 * l)
+        self.fc_bn1 = nn.BatchNorm1d(18 * l)
 
-        self.fc2 = nn.Linear(18*1024, 512)
-        self.fc_bn2 = nn.BatchNorm1d(512)
+        self.fc2 = nn.Linear(18 * l, n)
+        self.fc_bn2 = nn.BatchNorm1d(n)
 
-        self.fc3 = nn.Linear(512, self.action_size)
+        self.fc3 = nn.Linear(n, self.action_size)
 
-        self.fc4 = nn.Linear(512, 1)
+        self.fc4 = nn.Linear(n, 1)
 
     def forward(self, s):
         s = s.view(-1, 1, self.board_x, self.board_y, self.board_z)

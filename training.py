@@ -3,19 +3,19 @@ import threading
 
 from Coach import Coach
 from chesspy.ChessGame import ChessGame as Game
-from chesspy.pytorch.NNet import NNetWrapper as nn
+# from chesspy.pytorch.NNet import NNetWrapper as nn
+from chesspy.tensorflow.NNet import NNetWrapper as nn
 from utils import *
-
+import tensorflow as tf
 args = dotdict({
-    'numIters': 2,
-    'numEps': 2,  # Number of complete self-play games to simulate during a new iteration.
+    'numIters': 3,
+    'numEps': 1,  # Number of complete self-play games to simulate during a new iteration.
     'tempThreshold': 15,  #
-    'updateThreshold': 0.6, # During arena playoff, new neural net will be accepted if threshold or more of games are won.
-    'maxlenOfQueue': 20,  # Number of game examples to train the neural networks.
+    'updateThreshold': 0.1, # During arena playoff, new neural net will be accepted if threshold or more of games are won.
+    'maxlenOfQueue': 64,  # Number of game examples to train the neural networks.
     'numMCTSSims': 2,  # Number of games moves for MCTS to simulate.
     'arenaCompare': 2,  # Number of games to play during arena play to determine if new net will be accepted.
-    'cpuct': 1,
-
+    'cpuct': 4,
     'checkpoint': './training/',
     'load_model': False,
     'load_folder_file': ('./training/model/', 'best.pth.tar'),
@@ -23,6 +23,9 @@ args = dotdict({
 })
 
 if __name__ == "__main__":
+    sys.setrecursionlimit(int(9e+5))
+    threading.stack_size(int(9e+6))
+
     my_game = Game()
     nnet = nn(my_game)
 
@@ -33,8 +36,7 @@ if __name__ == "__main__":
     if args.load_model:
         print("Load trainExamples from file")
         c.loadTrainExamples()
-    sys.setrecursionlimit(10000)
-    threading.stack_size(2000000)
+
     thread = threading.Thread(target=c.learn())
     thread.start()
     # c.learn()

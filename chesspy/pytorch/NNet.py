@@ -23,17 +23,18 @@ from torchvision import datasets, transforms
 from .ChessNNet import ChessNNet as onnet
 
 args = dotdict({
-    'lr': 0.0005,
-    'dropout': 0.1,
-    'epochs': 2,
+    'lr': 0.001,
+    'dropout': 0.3,
+    'epochs': 3,
     'batch_size': 64,
     'cuda': torch.cuda.is_available(),
-    'num_channels': 128, #512 need 7.88 GB RAM free in GPU
+    'num_channels': 128,  # 512 need 7.88 GB RAM free in GPU
 })
 
 
 class NNetWrapper(NeuralNet):
     def __init__(self, game):
+        super().__init__(game)
         self.nnet = onnet(game, args)
         self.board_x, self.board_y, self.board_z = game.getBoardSize()
         self.action_size = game.getActionSize()

@@ -1,19 +1,17 @@
 import os
 import sys
-import time
 from collections import deque
 from pickle import Pickler, Unpickler
 from random import shuffle
-from tqdm import tqdm
 
 import numpy as np
+from tqdm import tqdm
 
 from Arena import Arena
 from MCTS import MCTS
-from pytorch_classification.utils import Bar, AverageMeter
 
 
-class Coach():
+class Coach:
     """
     This class executes the self-play + learning. It uses the functions defined
     in Game and NeuralNet. args are specified in training.py.
@@ -83,34 +81,24 @@ class Coach():
 
         for i in tqdm(range(1, self.args.numIters + 1)):
             # bookkeeping
-            print('\n------ITER ' + str(i) + '------')
+            print(f'Starting Iter #{i} ...')
             # examples of the iteration
             if not self.skipFirstSelfPlay or i > 1:
                 iterationTrainExamples = deque([], maxlen=self.args.maxlenOfQueue)
 
-                eps_time = AverageMeter()
-                bar = Bar('Self Play', max=self.args.numEps)
-                end = time.time()
+                print('Self Play', self.args.numEps)
 
                 for eps in range(self.args.numEps):
                     self.mcts = MCTS(self.game, self.nnet, self.args)  # reset search tree
                     iterationTrainExamples += self.executeEpisode()
 
-                    # bookkeeping + plot progress
-                    eps_time.update(time.time() - end)
-                    end = time.time()
-                    bar.suffix = '({eps}/{maxeps}) Eps Time: {et:.3f}s | Total: {total:} | ETA: {eta:}' \
-                        .format(eps=eps + 1, maxeps=self.args.numEps, et=eps_time.avg, total=bar.elapsed_td,
-                                eta=bar.eta_td)
-                    bar.next()
-                bar.finish()
-
                 # save the iteration examples to the history 
                 self.trainExamplesHistory.append(iterationTrainExamples)
 
             if len(self.trainExamplesHistory) > self.args.numItersForTrainExamplesHistory:
-                print("len(trainExamplesHistory) =", len(self.trainExamplesHistory),
-                      " => remove the oldest trainExamples")
+                print(
+                    f"Removing the oldest entry in trainExamples. len(trainExamplesHistory) "
+                    f"= {len(self.trainExamplesHistory)}")
                 self.trainExamplesHistory.pop(0)
             # backup history to a file
             # NB! the examples were collected using the model from the previous iteration, so (i-1)  
@@ -123,7 +111,7 @@ class Coach():
             shuffle(trainExamples)
 
             # training new network, keeping a copy of the old one
-            # self.nnet.save_checkpoint(folder=self.args.checkpoint, filename='temp.pth.tar')
+            self.nnet.save_checkpoint(folder=self.args.checkpoint, filename='temp.pth.tar')
             self.pnet.load_checkpoint(folder=self.args.checkpoint, filename='temp.pth.tar')
             pmcts = MCTS(self.game, self.pnet, self.args)
 
@@ -155,20 +143,20 @@ class Coach():
         filename = os.path.join(folder, self.getCheckpointFile(iteration) + ".examples")
         with open(filename, "wb+") as f:
             Pickler(f).dump(self.trainExamplesHistory)
-        f.closed
 
     def loadTrainExamples(self):
         modelFile = os.path.join(self.args.load_folder_file[0], self.args.load_folder_file[1])
         examplesFile = modelFile + ".examples"
         if not os.path.isfile(examplesFile):
-            print(examplesFile)
+            print(f'File "{examplesFile}" with trainExamples not found!')
             r = input("File with trainExamples not found. Continue? [y|n]")
             if r != "y":
                 sys.exit()
         else:
-            print("File with trainExamples found. Read it.")
+            print("File with trainExamples found. Loading it...")
             with open(examplesFile, "rb") as f:
                 self.trainExamplesHistory = Unpickler(f).load()
-            f.closed
+            print('Loading done!')
+
             # examples based on the model were already collected (loaded)
             self.skipFirstSelfPlay = True
