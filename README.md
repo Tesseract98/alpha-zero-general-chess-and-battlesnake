@@ -8,9 +8,9 @@ To use a game of your choice, subclass the classes in ```Game.py``` and ```Neura
 
 To start training a model for Othello:
 ```bash
-python main.py
+python train.py
 ```
-Choose your framework and game in ```main.py```.
+Choose your framework and game in ```train.py```.
 
 ### Docker Installation
 For easy environment setup, we can use [nvidia-docker](https://github.com/NVIDIA/nvidia-docker). Once you have nvidia-docker set up, we can then simply run:
@@ -51,8 +51,8 @@ Thanks to [pytorch-classification](https://github.com/bearpaw/pytorch-classifica
 pip install -r requirements.txt
 ```
 
-Added chess game (chesspy) with pytorch / tensorflow AI.
+Added chess game (```chesspy```) with pytorch / tensorflow AI.
 
-Also added playing visualization in Play_Agent.py (To play with AI, you need to extract the best model from the rar archive in /training/model/)
+Also added playing visualization in ```Play_Agent.py``` (To play with AI, you need to extract the best model from the rar archive in /training/model/)
 
 ![alt text](https://github.com/Tesseract98/alpha-zero-general-chess-and-battlesnake/raw/master/data/chess_board.png)
