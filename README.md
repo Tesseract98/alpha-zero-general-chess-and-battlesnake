@@ -47,6 +47,10 @@ Thanks to [pytorch-classification](https://github.com/bearpaw/pytorch-classifica
 
 ### Additions
 
+```
+pip install -r requirements.txt
+```
+
 Added chess game (chesspy) with pytorch / tensorflow AI.
 
 Also added playing visualization in Play_Agent.py (To play with AI, you need to extract the best model from the rar archive in /training/model/)
