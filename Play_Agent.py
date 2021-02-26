@@ -6,7 +6,7 @@ from chesspy.ChessGame import ChessGame as Game
 from chesspy.ChessPlayers import RandomPlayer, StaticChessPlayer
 from chesspy.tensorflow.NNet import NNetWrapper as NNet
 # from chesspy.pytorch.NNet import NNetWrapper as NNet
-from utils import *
+from utils import dotdict
 
 
 def init_player():
