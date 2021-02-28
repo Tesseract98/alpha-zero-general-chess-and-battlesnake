@@ -45,30 +45,32 @@ class Coach:
         trainExamples = []
         board = self.game.getInitBoard()
         self.curPlayer = 1
-        episodeStep = 0
 
-        # while True:
-        for _ in tqdm(range(1000), position=0, leave=True):
-            episodeStep += 1
-            canonicalBoard = self.game.getCanonicalForm(board, self.curPlayer)
-            temp = int(episodeStep < self.args.tempThreshold)
+        self.mcts = MCTS(self.game, self.nnet, self.args)  # reset search tree
+        with tqdm(total=1500, position=0, leave=True) as pbar:
+            while True:
+                canonicalBoard = self.game.getCanonicalForm(board, self.curPlayer)
+                temp = int(pbar.n < self.args.tempThreshold)
 
-            pi = self.mcts.getActionProb(canonicalBoard, temp=temp)
-            sym = self.game.getSymmetries(canonicalBoard, pi)
-            for b, p in sym:
-                trainExamples.append([self.game.toArray(b), self.curPlayer, p, None])
+                pi = self.mcts.getActionProb(canonicalBoard, temp=temp)
+                sym = self.game.getSymmetries(canonicalBoard, pi)
+                for b, p in sym:
+                    trainExamples.append([self.game.toArray(b), self.curPlayer, p, None])
 
-            action = np.random.choice(len(pi), p=pi)
-            board, self.curPlayer, move = self.game.getNextState(board, self.curPlayer, action)
+                action = np.random.choice(len(pi), p=pi)
+                board, self.curPlayer, move = self.game.getNextState(board, self.curPlayer, action)
 
-            r = self.game.getGameEnded(board, self.curPlayer)
+                r = self.game.getGameEnded(board, self.curPlayer)
 
-            if r != 0:
-                print(board)
-                print(board.result(), " ", board.fen())
-                return [(x[0], x[2], r * ((-1) ** (x[1] != self.curPlayer))) for x in trainExamples]
-            # else:
-            #     print(board)
+                if r != 0:
+                    print()
+                    print(board)
+                    print(board.result(), " ", board.fen())
+                    print()
+                    return [(x[0], x[2], r * ((-1) ** (x[1] != self.curPlayer))) for x in trainExamples]
+                # else:
+                    # print(board)
+                pbar.update(1)
 
     def learn(self):
         """
@@ -79,9 +81,9 @@ class Coach:
         only if it wins >= updateThreshold fraction of games.
         """
 
-        for i in tqdm(range(1, self.args.numIters + 1)):
+        for i in tqdm(range(1, self.args.numIters + 1), position=0, leave=True, desc="all iterations"):
             # bookkeeping
-            print(f'Starting Iter #{i} ...')
+            print(f'\nStarting Iter #{i} ...')
             # examples of the iteration
             if not self.skipFirstSelfPlay or i > 1:
                 iterationTrainExamples = deque([], maxlen=self.args.maxlenOfQueue)
@@ -89,7 +91,6 @@ class Coach:
                 print('Self Play', self.args.numEps)
 
                 for eps in range(self.args.numEps):
-                    self.mcts = MCTS(self.game, self.nnet, self.args)  # reset search tree
                     iterationTrainExamples += self.executeEpisode()
 
                 # save the iteration examples to the history 

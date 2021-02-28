@@ -78,6 +78,7 @@ class ChessGame(Game):
             # print(move, " is not valid - ",self.all_possible_moves[action])
             move = move + self.all_possible_moves[action][-1:]
             # print("moveupdated:",move)
+
         board = board.copy()
         board.push(chess.Move.from_uci(move))
         return (board, -player, move)

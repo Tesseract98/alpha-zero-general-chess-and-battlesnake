@@ -21,6 +21,8 @@ class MCTS():
         self.Es = {}  # stores game.getGameEnded ended for board s
         self.Vs = {}  # stores game.getValidMoves for board s
 
+        self.moves = []
+
     def getActionProb(self, canonicalBoard, temp=1):
         """
         This function performs numMCTSSims simulations of MCTS starting from
@@ -31,13 +33,13 @@ class MCTS():
                    proportional to Nsa[(s,a)]**(1./temp)
         """
         for i in range(self.args.numMCTSSims):
-            self.search(canonicalBoard)
+            res = self.search(canonicalBoard, 0)
 
         s = self.game.stringRepresentation(canonicalBoard)
         counts = [self.Nsa[(s, a)] if (s, a) in self.Nsa else 0 for a in range(self.game.getActionSize())]
 
         if temp == 0:
-            bestA = np.argmax(counts)
+            bestA = int(np.argmax(counts))
             probs = [0] * len(counts)
             probs[bestA] = 1
             return probs
@@ -47,7 +49,7 @@ class MCTS():
         probs = [x / counts_sum for x in counts]
         return probs
 
-    def search(self, canonicalBoard):
+    def search(self, canonicalBoard, n_iter, rec_limit: int = 1000):
         """
         This function performs one iteration of MCTS. It is recursively called
         till a leaf node is found. The action chosen at each node is one that
@@ -101,24 +103,50 @@ class MCTS():
         cur_best = -float('inf')
         best_act = -1
 
+        best_act_u_dict = dict()
         # pick the action with the highest upper confidence bound
         for a in range(self.game.getActionSize()):
             if valids[a]:
                 if (s, a) in self.Qsa:
                     u = self.Qsa[(s, a)] + self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s]) / (
-                                1 + self.Nsa[(s, a)])
+                            1 + self.Nsa[(s, a)])
                 else:
                     u = self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS)  # Q = 0 ?
 
                 if u > cur_best:
                     cur_best = u
                     best_act = a
+                    best_act_u_dict[a] = u
 
         a = best_act
-        next_s, next_player, _ = self.game.getNextState(canonicalBoard, 1, a)
+
+        # this helps to avoid the recursion of a step forward and backward
+        # TODO: develop a more productive way to avoid stack overflow
+        best_act_u_dict.pop(a)
+        for act in self.moves:
+            best_act_u_dict_len = len(best_act_u_dict.keys())
+            if self.moves.count(act) > 30 and best_act_u_dict_len > 0:
+                possible_moves = list(dict(sorted(best_act_u_dict.items(), key=lambda item: item[1])).keys())
+                possible_moves = possible_moves[best_act_u_dict_len // 2:]
+                # a = np.random.choice(np.where(valids)[0])
+                a = np.random.choice(possible_moves)
+                self.clean_up_moves()
+                break
+
+        self.moves.append(a)
+
+        next_s, next_player, move = self.game.getNextState(canonicalBoard, 1, a)
         next_s = self.game.getCanonicalForm(next_s, next_player)
 
-        v = self.search(next_s)
+        if n_iter > rec_limit:
+            # print("!!!EXCEED RECURSION!!!")
+            self.Ps[s], v = self.nnet.predict(self.game.toArray(canonicalBoard))
+            return v
+
+        v = self.search(next_s, n_iter + 1)
+
+        # if v == 0:
+        #     return 0
 
         if (s, a) in self.Qsa:
             self.Qsa[(s, a)] = (self.Nsa[(s, a)] * self.Qsa[(s, a)] + v) / (self.Nsa[(s, a)] + 1)
@@ -129,4 +157,19 @@ class MCTS():
             self.Nsa[(s, a)] = 1
 
         self.Ns[s] += 1
+        self.clean_up_moves()
         return -v
+
+    def clean_up_moves(self):
+        self.moves = []
+
+    # def clean_all_fields(self):
+    #     self.Qsa = {}  # stores Q values for s,a (as defined in the paper)
+    #     self.Nsa = {}  # stores #times edge s,a was visited
+    #     self.Ns = {}  # stores #times board s was visited
+    #     self.Ps = {}  # stores initial policy (returned by neural net)
+    #
+    #     self.Es = {}  # stores game.getGameEnded ended for board s
+    #     self.Vs = {}  # stores game.getValidMoves for board s
+    #
+    #     self.moves = []

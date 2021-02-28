@@ -1,3 +1,4 @@
+import chess
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.button import Button
@@ -7,11 +8,9 @@ from kivy.uix.screenmanager import Screen
 
 from Visualize_the_Board.Data_Conversion.chess_coords_to_real_coords import convert_coordinates
 from Visualize_the_Board.Data_Conversion.difference_for_letter import promotion_piece
-
 from Visualize_the_Board.Data_Conversion.position_of_mouse import find_position
 from Visualize_the_Board.Data_Conversion.position_of_pieces import conversion_to_number, team_turn, position_dic
 from chesspy.ChessGame import ChessGame
-import chess
 
 
 class BoardScreen(Screen):
@@ -85,7 +84,6 @@ class BoardScreen(Screen):
                     # Functionality for every move; moving the piece to the correct location and updating the dictionary
                     self.every_move_functionality(conversion, self.piece_that_moved)
 
-
                 else:
                     # Check to see if a promotion is occuring
                     not_a_promotion, content, content1, content2, content3 = self.check_for_promotion()
@@ -154,21 +152,19 @@ class BoardScreen(Screen):
             if str(self.piece_that_moved)[6] == 'P':
                 if self.piece_that_moved[0] == "W":
                     if int(self.chess_position_numerical[1]) + 1 == int(str(self.pos_chess)[1]):
-                        not_a_promotion = False
+                        # not_a_promotion = False
+                        # TODO: change it to false and find a way to change pawn to another piece
+                        not_a_promotion = True
                         # If the piece being promoted is White
                         # Adds four buttons the user can touch, symbolizing what piece the user will want to promote to
-                        content = Button(id='Queen Promotion',
-                                         background_normal='Visualize_the_Board\Pictures\White_Queen.png',
-                                         size=(60, 60), pos=(410, 300))
-                        content1 = Button(id='Rook Promotion',
-                                          background_normal='Visualize_the_Board\Pictures\white_rook.png',
-                                          size=(60, 60), pos=(307.5, 400))
-                        content2 = Button(id='Bishop Promotion',
-                                          background_normal='Visualize_the_Board\Pictures\white_Bishop.png',
-                                          size=(60, 60), pos=(307.5, 300))
-                        content3 = Button(id='Knight Promotion',
-                                          background_normal='Visualize_the_Board\Pictures\white_horse.png',
-                                          size=(60, 60), pos=(410, 400))
+                        content = Button(background_normal='Visualize_the_Board\Pictures\White_Queen.png',
+                                         size_hint=(60, 60), pos_hint=(410, 300))
+                        content1 = Button(background_normal='Visualize_the_Board\Pictures\white_rook.png',
+                                          size_hint=(60, 60), pos_hint=(307.5, 400))
+                        content2 = Button(background_normal='Visualize_the_Board\Pictures\white_Bishop.png',
+                                          size_hint=(60, 60), pos_hint=(307.5, 300))
+                        content3 = Button(background_normal='Visualize_the_Board\Pictures\white_horse.png',
+                                          size_hint=(60, 60), pos_hint=(410, 400))
                         return not_a_promotion, content, content1, content2, content3
 
         elif str(self.pos_chess) == "a1" or str(self.pos_chess) == "b1" or str(self.pos_chess) == "c1" \
@@ -177,20 +173,18 @@ class BoardScreen(Screen):
             if str(self.piece_that_moved)[6] == 'P':
                 if self.piece_that_moved[0] == "B":
                     if int(self.chess_position_numerical[1]) + 1 == int(str(self.pos_chess)[1]):
-                        not_a_promotion = False
+                        # not_a_promotion = False
+                        # TODO: change it to false and find a way to change pawn to another piece
+                        not_a_promotion = True
                         # Adds four buttons, but this time in Black, Not white
-                        content = Button(id='Queen Promotion',
-                                         background_normal='Visualize_the_Board\Pictures/black_Queen.png',
-                                         size=(60, 60), pos=(410, 300))
-                        content1 = Button(id='Rook Promotion',
-                                          background_normal='Visualize_the_Board\Pictures/black_rook.png',
-                                          size=(60, 60), pos=(307.5, 400))
-                        content2 = Button(id='Bishop Promotion',
-                                          background_normal='Visualize_the_Board\Pictures/black_Bishop.png',
-                                          size=(60, 60), pos=(307.5, 300))
-                        content3 = Button(id='Knight Promotion',
-                                          background_normal='Visualize_the_Board\Pictures/black_horse.png',
-                                          size=(60, 60), pos=(410, 400))
+                        content = Button(background_normal='Visualize_the_Board\Pictures/black_Queen.png',
+                                         size_hint=(60, 60), position_hint=(410, 300))
+                        content1 = Button(background_normal='Visualize_the_Board\Pictures/black_rook.png',
+                                          size_hint=(60, 60), position_hint=(307.5, 400))
+                        content2 = Button(background_normal='Visualize_the_Board\Pictures/black_Bishop.png',
+                                          size_hint=(60, 60), position_hint=(307.5, 300))
+                        content3 = Button(background_normal='Visualize_the_Board\Pictures/black_horse.png',
+                                          size_hint=(60, 60), position_hint=(410, 400))
                         return not_a_promotion, content, content1, content2, content3
 
         return not_a_promotion, "", "", "", ""

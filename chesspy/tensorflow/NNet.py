@@ -15,7 +15,7 @@ sys.path.append('../../')
 args = dotdict({
     'lr': 0.001,
     'dropout': 0.3,
-    'epochs': 5,
+    'epochs': 10,
     'batch_size': 64,
     'num_channels': 128,  # 512 need 7.88 GB RAM free in GPU
 })
@@ -42,8 +42,8 @@ class NNetWrapper(NeuralNet):
         examples: list of examples, each example is of form (board, pi, v)
         """
 
-        for epoch in range(args.epochs):
-            print('EPOCH ::: ' + str(epoch + 1))
+        for epoch in tqdm(range(args.epochs), position=0, leave=True, desc="EPOCH :::"):
+            # print('EPOCH ::: ' + str(epoch + 1))
 
             for batch_idx in tqdm(range(int(len(examples) / args.batch_size)), position=0, leave=True):
                 sample_ids = np.random.randint(len(examples), size=args.batch_size)
