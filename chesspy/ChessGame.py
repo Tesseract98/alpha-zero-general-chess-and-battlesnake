@@ -74,16 +74,21 @@ class ChessGame(Game):
             move = str(mirror_action(chess.Move.from_uci(move)))
 
         if move not in getAllowedMovesFromBoard(board):  # must be a pawn promotion
+            # print(getAllowedMovesFromBoard(board))
             # print(board)
             # print(move, " is not valid - ",self.all_possible_moves[action])
             move = move + self.all_possible_moves[action][-1:]
             # print("moveupdated:",move)
 
         board = board.copy()
-        board.push(chess.Move.from_uci(move))
+        try:
+            board.push(chess.Move.from_uci(move))
+        except:
+            print(move, self.all_possible_moves[action])
+            print(chess.Move.from_uci(move))
         return (board, -player, move)
 
-    def getValidMoves(self, board, player):
+    def getValidMoves(self, board, player, enable_assertion: bool = False):
         """
         Input:
             board: current board
@@ -99,8 +104,9 @@ class ChessGame(Game):
         current_allowed_moves = np.array(getAllowedMovesFromBoard(board))
         # TODO find a better way
         validMoves = np.isin(np.array(self.all_possible_moves), current_allowed_moves).astype(int)
-
-        assert np.sum(validMoves) == len(current_allowed_moves)
+        if enable_assertion:
+            assert np.sum(validMoves) > 0
+            assert np.sum(validMoves) == len(current_allowed_moves)
         return validMoves
 
     def getGameEnded(self, board, player):

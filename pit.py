@@ -29,8 +29,7 @@ try:
     mcts1 = MCTS(g, n1, args1)
     ap = lambda x: np.argmax(mcts1.getActionProb(x, temp=0))
 except ValueError:
-    print('warning: no AI found')
-    ap = None
+    raise RuntimeError('warning: no AI found')
 
 player1 = ap
 player2 = rp

@@ -10,6 +10,7 @@ from NeuralNet import NeuralNet
 from utils import *
 from .ChessNNet import ChessNNet as onnet
 
+np.random.seed(11)
 sys.path.append('../../')
 
 args = dotdict({

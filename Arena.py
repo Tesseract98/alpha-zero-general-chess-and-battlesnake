@@ -42,7 +42,7 @@ class Arena:
         curPlayer = 1
         board = self.game.getInitBoard()
         it = 0
-        with tqdm(total=5000, position=0, leave=True, desc="episode of a game") as pbar:
+        with tqdm(total=2500, position=0, leave=True, desc="episode of a game") as pbar:
             while self.game.getGameEnded(board, curPlayer) == 0:
                 it += 1
                 if verbose:

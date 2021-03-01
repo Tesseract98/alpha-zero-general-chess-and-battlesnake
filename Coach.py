@@ -10,6 +10,8 @@ from tqdm import tqdm
 from Arena import Arena
 from MCTS import MCTS
 
+np.random.seed(11)
+
 
 class Coach:
     """
@@ -93,7 +95,7 @@ class Coach:
                 for eps in range(self.args.numEps):
                     iterationTrainExamples += self.executeEpisode()
 
-                # save the iteration examples to the history 
+                # save the iteration examples to the history
                 self.trainExamplesHistory.append(iterationTrainExamples)
 
             if len(self.trainExamplesHistory) > self.args.numItersForTrainExamplesHistory:
@@ -102,7 +104,7 @@ class Coach:
                     f"= {len(self.trainExamplesHistory)}")
                 self.trainExamplesHistory.pop(0)
             # backup history to a file
-            # NB! the examples were collected using the model from the previous iteration, so (i-1)  
+            # NB! the examples were collected using the model from the previous iteration, so (i-1)
             self.saveTrainExamples(i - 1)
 
             # shuffle examples before training

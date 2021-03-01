@@ -1,6 +1,7 @@
 import math
 import numpy as np
 
+np.random.seed(11)
 EPS = 1e-8
 
 
@@ -32,16 +33,42 @@ class MCTS():
             probs: a policy vector where the probability of the ith action is
                    proportional to Nsa[(s,a)]**(1./temp)
         """
-        for i in range(self.args.numMCTSSims):
-            res = self.search(canonicalBoard, 0)
-
         s = self.game.stringRepresentation(canonicalBoard)
+
+        if self.game.getGameEnded(canonicalBoard, 1) != 0 or s in self.Es and self.Es[s] != 0:
+            valids = self.game.getValidMoves(canonicalBoard, 1)
+            # print("arena push not ended game")
+            if np.sum(valids) > 0:
+                # print("random move")
+                bestA = np.random.choice(np.where(valids)[0])
+                probs = [0] * self.game.getActionSize()
+                probs[bestA] = 1
+                return probs
+
+        for i in range(self.args.numMCTSSims):
+            self.search(canonicalBoard, 0)
+
         counts = [self.Nsa[(s, a)] if (s, a) in self.Nsa else 0 for a in range(self.game.getActionSize())]
 
         if temp == 0:
             bestA = int(np.argmax(counts))
             probs = [0] * len(counts)
             probs[bestA] = 1
+
+            valids = self.game.getValidMoves(self.game.getCanonicalForm(canonicalBoard, 1), 1)
+            if valids[np.argmax(probs)] == 0:
+                print(bestA, np.argmax(probs))
+                print(s)
+                print(canonicalBoard.fen())
+                print(canonicalBoard)
+                # print(self.Qsa)
+                print(self.Nsa)
+                print(self.Ns)
+                # print(self.Ps)
+                print(self.Es)
+                print(self.Vs)
+                raise RuntimeError("something wrong")
+
             return probs
 
         counts = [x ** (1. / temp) for x in counts]
@@ -113,10 +140,11 @@ class MCTS():
                 else:
                     u = self.args.cpuct * self.Ps[s][a] * math.sqrt(self.Ns[s] + EPS)  # Q = 0 ?
 
+                best_act_u_dict[a] = u
+
                 if u > cur_best:
                     cur_best = u
                     best_act = a
-                    best_act_u_dict[a] = u
 
         a = best_act
 
@@ -126,10 +154,15 @@ class MCTS():
         for act in self.moves:
             best_act_u_dict_len = len(best_act_u_dict.keys())
             if self.moves.count(act) > 30 and best_act_u_dict_len > 0:
+                # self.Ps[s] = self.Ps[s] + valids
+                # self.Ps[s] /= np.sum(self.Ps[s])
                 possible_moves = list(dict(sorted(best_act_u_dict.items(), key=lambda item: item[1])).keys())
                 possible_moves = possible_moves[best_act_u_dict_len // 2:]
                 # a = np.random.choice(np.where(valids)[0])
-                a = np.random.choice(possible_moves)
+                if len(possible_moves) != 0:
+                    a = np.random.choice(possible_moves)
+                    # a = possible_moves[-1]
+
                 self.clean_up_moves()
                 break
 
@@ -144,9 +177,6 @@ class MCTS():
             return v
 
         v = self.search(next_s, n_iter + 1)
-
-        # if v == 0:
-        #     return 0
 
         if (s, a) in self.Qsa:
             self.Qsa[(s, a)] = (self.Nsa[(s, a)] * self.Qsa[(s, a)] + v) / (self.Nsa[(s, a)] + 1)
