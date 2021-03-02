@@ -45,7 +45,7 @@ While the current code is fairly functional, we could benefit from the following
 
 Thanks to [pytorch-classification](https://github.com/bearpaw/pytorch-classification) and [progress](https://github.com/verigak/progress).
 
-### Additions
+### Additions of chess game
 
 ```
 pip install -r requirements.txt
@@ -53,6 +53,27 @@ pip install -r requirements.txt
 
 Added chess game (```chesspy```) with pytorch / tensorflow AI.
 
-Also added playing visualization in ```Play_Agent.py``` (To play with AI, you need to extract the best model from the rar archive in /training/model/)
+To start training a model for Chess, need to run ```train.py```.
+
+To play with AI need to run ```Play_Agent.py```.
+
+If you want to play with AI, you'll need to extract files from ```best.pth.tar.rar``` archive in training\model\.
+
+The best model were trained (https://colab.research.google.com/notebooks/intro.ipynb) with following parameters:
+* 'numIters': 11,
+* 'numEps': 15,
+* 'tempThreshold': 25,
+* 'updateThreshold': 0.5,
+* 'maxlenOfQueue': 4096
+* 'numMCTSSims': 15,
+* 'arenaCompare': 4,
+* 'cpuct': 1,
+* 'numItersForTrainExamplesHistory': 5.
+
+Also changed MCTS.getActionProb and MCTS.search algorithms, 
+they were crashed the program cause of stack overflow (algorithm made repeatable steps and didn't exit out of recursion).
+
+Also added playing visualization in ```Play_Agent.py``` 
+(To play with AI, you need to extract the best model from the rar archive in /training/model/).
 
 ![alt text](https://github.com/Tesseract98/alpha-zero-general-chess-and-battlesnake/raw/master/data/chess_board.png)
