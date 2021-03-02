@@ -153,15 +153,15 @@ class MCTS():
         best_act_u_dict.pop(a)
         for act in self.moves:
             best_act_u_dict_len = len(best_act_u_dict.keys())
-            if self.moves.count(act) > 30 and best_act_u_dict_len > 0:
+            if self.moves.count(act) > 10 and best_act_u_dict_len > 0:
                 # self.Ps[s] = self.Ps[s] + valids
                 # self.Ps[s] /= np.sum(self.Ps[s])
                 possible_moves = list(dict(sorted(best_act_u_dict.items(), key=lambda item: item[1])).keys())
                 possible_moves = possible_moves[best_act_u_dict_len // 2:]
                 # a = np.random.choice(np.where(valids)[0])
                 if len(possible_moves) != 0:
-                    a = np.random.choice(possible_moves)
-                    # a = possible_moves[-1]
+                    # a = np.random.choice(possible_moves)
+                    a = possible_moves[-1]
 
                 self.clean_up_moves()
                 break
