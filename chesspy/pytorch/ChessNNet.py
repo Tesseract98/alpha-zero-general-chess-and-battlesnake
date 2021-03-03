@@ -24,8 +24,8 @@ class ChessNNet(nn.Module):
         self.bn3 = nn.BatchNorm3d(args.num_channels)
         self.bn4 = nn.BatchNorm3d(args.num_channels)
 
-        n = 128
-        l = 256
+        n = 512
+        l = 1024
         self.fc1 = nn.Linear(args.num_channels*(self.board_x-4)*(self.board_y-4)*(self.board_z-4), 18 * l)
         self.fc_bn1 = nn.BatchNorm1d(18 * l)
 

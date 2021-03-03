@@ -18,7 +18,7 @@ args = dotdict({
     'dropout': 0.3,
     'epochs': 10,
     'batch_size': 64,
-    'num_channels': 128,  # 512 need 7.88 GB RAM free in GPU
+    'num_channels': 512,  # 512 need 5.88 GB RAM free in GPU
 })
 
 
@@ -42,8 +42,10 @@ class NNetWrapper(NeuralNet):
         """
         examples: list of examples, each example is of form (board, pi, v)
         """
-
-        for epoch in tqdm(range(args.epochs), position=0, leave=True, desc="EPOCH :::"):
+        pi_losses = AverageMeter()
+        v_losses = AverageMeter()
+        t_bar = tqdm(range(args.epochs), position=0, leave=True, desc="EPOCH :::")
+        for epoch in t_bar:
             # print('EPOCH ::: ' + str(epoch + 1))
 
             for batch_idx in tqdm(range(int(len(examples) / args.batch_size)), position=0, leave=True):
@@ -57,6 +59,10 @@ class NNetWrapper(NeuralNet):
                 # record loss
                 self.sess.run(self.nnet.train_step, feed_dict=input_dict)
                 pi_loss, v_loss = self.sess.run([self.nnet.loss_pi, self.nnet.loss_v], feed_dict=input_dict)
+
+                pi_losses.update(pi_loss, len(boards))
+                v_losses.update(v_loss, len(boards))
+                t_bar.set_postfix(Loss_pi=pi_losses, Loss_v=v_losses)
 
     def predict(self, board):
         """

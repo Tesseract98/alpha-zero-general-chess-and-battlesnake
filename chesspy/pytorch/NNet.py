@@ -25,10 +25,10 @@ from .ChessNNet import ChessNNet as onnet
 args = dotdict({
     'lr': 0.001,
     'dropout': 0.3,
-    'epochs': 3,
+    'epochs': 10,
     'batch_size': 64,
     'cuda': torch.cuda.is_available(),
-    'num_channels': 128,  # 512 need 7.88 GB RAM free in GPU
+    'num_channels': 512,  # 512 need 5.88 GB RAM free in GPU
 })
 
 

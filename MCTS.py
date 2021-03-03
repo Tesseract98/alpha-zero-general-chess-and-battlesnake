@@ -76,7 +76,7 @@ class MCTS():
         probs = [x / counts_sum for x in counts]
         return probs
 
-    def search(self, canonicalBoard, n_iter, rec_limit: int = 1000):
+    def search(self, canonicalBoard, n_iter, rec_limit: int = 1500):
         """
         This function performs one iteration of MCTS. It is recursively called
         till a leaf node is found. The action chosen at each node is one that
@@ -174,7 +174,7 @@ class MCTS():
         if n_iter > rec_limit:
             # print("!!!EXCEED RECURSION!!!")
             self.Ps[s], v = self.nnet.predict(self.game.toArray(canonicalBoard))
-            return v
+            return -v
 
         v = self.search(next_s, n_iter + 1)
 

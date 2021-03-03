@@ -25,11 +25,14 @@ class ChessGame(Game):
     """
 
     def __init__(self):
+        super().__init__()
         # TODO move to a location to be static
         self.all_possible_moves = create_uci_labels()
         # self.winner = None  # type: Winner
         # self.resigned = False
         # self.result = None
+        # TODO how small is better?
+        self.DRAW = 0.001
 
     def getInitBoard(self):
         """
@@ -126,7 +129,7 @@ class ChessGame(Game):
         elif r == "0-1":
             return -player
         elif r == "1/2-1/2":
-            return 0.001  # TODO how small is better?
+            return self.DRAW
         else:
             return 0
 

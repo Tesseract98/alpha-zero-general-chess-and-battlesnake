@@ -49,8 +49,9 @@ class Coach:
         self.curPlayer = 1
 
         self.mcts = MCTS(self.game, self.nnet, self.args)  # reset search tree
+        result = 0
         with tqdm(total=1500, position=0, leave=True) as pbar:
-            while True:
+            while result == 0:
                 canonicalBoard = self.game.getCanonicalForm(board, self.curPlayer)
                 temp = int(pbar.n < self.args.tempThreshold)
 
@@ -62,19 +63,17 @@ class Coach:
                 action = np.random.choice(len(pi), p=pi)
                 board, self.curPlayer, move = self.game.getNextState(board, self.curPlayer, action)
 
-                r = self.game.getGameEnded(board, self.curPlayer)
-
-                if r != 0:
-                    print()
-                    print(board)
-                    print(board.result(), " ", board.fen())
-                    print()
-                    return [(x[0], x[2], r * ((-1) ** (x[1] != self.curPlayer))) for x in trainExamples]
-                # else:
-                    # print(board)
+                result = self.game.getGameEnded(board, self.curPlayer)
+                # print(board)
                 pbar.update(1)
 
-    def learn(self):
+            print()
+            print(board)
+            print(board.result(), " ", board.fen())
+            print()
+            return result, [(x[0], x[2], result * ((-1) ** (x[1] != self.curPlayer))) for x in trainExamples]
+
+    def learn(self, disable_draw_result: bool = False):
         """
         Performs numIters iterations with numEps episodes of self-play in each
         iteration. After every iteration, it retrains neural network with
@@ -93,7 +92,10 @@ class Coach:
                 print('Self Play', self.args.numEps)
 
                 for eps in range(self.args.numEps):
-                    iterationTrainExamples += self.executeEpisode()
+                    result, train_examples = self.executeEpisode()
+                    if disable_draw_result and result != self.game.DRAW:
+                        print("added training examples")
+                        iterationTrainExamples += train_examples
 
                 # save the iteration examples to the history
                 self.trainExamplesHistory.append(iterationTrainExamples)

@@ -8,9 +8,9 @@ To use a game of your choice, subclass the classes in ```Game.py``` and ```Neura
 
 To start training a model for Othello:
 ```bash
-python train.py
+python training.py
 ```
-Choose your framework and game in ```train.py```.
+Choose your framework and game in ```training.py```.
 
 ### Docker Installation
 For easy environment setup, we can use [nvidia-docker](https://github.com/NVIDIA/nvidia-docker). Once you have nvidia-docker set up, we can then simply run:
@@ -53,7 +53,7 @@ pip install -r requirements.txt
 
 Added chess game (```chesspy```) with pytorch / tensorflow AI.
 
-To start training a model for Chess, need to run ```train.py```.
+To start training a model for Chess, need to run ```training.py```.
 
 To play with AI need to run ```Play_Agent.py```.
 
