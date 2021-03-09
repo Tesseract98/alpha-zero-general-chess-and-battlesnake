@@ -36,5 +36,5 @@ def init_player():
 
 if __name__ == "__main__":
     sys.setrecursionlimit(5000)
-    visualize = GUI()
+    visualize = GUI(is_linux=True)
     visualize.setup(init_player())

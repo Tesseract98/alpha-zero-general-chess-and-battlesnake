@@ -18,7 +18,7 @@ args = dotdict({
     'dropout': 0.3,
     'epochs': 10,
     'batch_size': 64,
-    'num_channels': 512,  # 512 need 5.88 GB RAM free in GPU
+    'num_channels': 128,  # 512 need 5.88 GB RAM free in GPU
 })
 
 
