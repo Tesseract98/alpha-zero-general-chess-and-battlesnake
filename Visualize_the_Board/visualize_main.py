@@ -1,12 +1,9 @@
 from Visualize_the_Board.Board import ChessWindow
-from Visualize_the_Board.Board import ChessWindowLinux
 from kivy.config import Config
 from kivy.core.window import Window
 
 
 class GUI:
-    def __init__(self, is_linux: bool) -> None:
-        self.is_linux = is_linux
 
     def setup(self, player_ai):
         # Set the Height and Width of the Board
@@ -28,7 +25,4 @@ class GUI:
         Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
         # Runs the
-        if self.is_linux:
-            ChessWindowLinux(player_ai).run()
-        else:
-            ChessWindow(player_ai).run()
+        ChessWindow(player_ai).run()

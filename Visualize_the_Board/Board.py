@@ -375,13 +375,3 @@ class ChessWindow(App):
 
     def build(self):
         return BoardScreen(self.player)
-
-
-# Builds the App
-class ChessWindowLinux(App):
-    def __init__(self, player_ai=None, **kwargs):
-        super().__init__(**kwargs)
-        self.player = player_ai
-
-    def build(self):
-        return BoardScreen(self.player)
