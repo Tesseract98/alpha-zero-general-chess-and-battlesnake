@@ -18,7 +18,7 @@ args = dotdict({
     'dropout': 0.3,
     'epochs': 10,
     'batch_size': 64,
-    'num_channels': 128,  # 512 need 5.88 GB RAM free in GPU
+    'num_channels': 512,  # 512 need 5.88 GB RAM free in GPU
 })
 
 
@@ -53,8 +53,13 @@ class NNetWrapper(NeuralNet):
                 boards, pis, vs = list(zip(*[examples[i] for i in sample_ids]))
 
                 # predict
-                input_dict = {self.nnet.input_boards: boards, self.nnet.target_pis: pis, self.nnet.target_vs: vs,
-                              self.nnet.dropout: args.dropout, self.nnet.isTraining: True}
+                input_dict = {
+                    self.nnet.input_boards: boards,
+                    self.nnet.target_pis: pis,
+                    self.nnet.target_vs: vs,
+                    self.nnet.dropout: args.dropout,
+                    self.nnet.isTraining: True
+                }
 
                 # record loss
                 self.sess.run(self.nnet.train_step, feed_dict=input_dict)

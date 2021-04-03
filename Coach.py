@@ -73,7 +73,7 @@ class Coach:
             print()
             return result, [(x[0], x[2], result * ((-1) ** (x[1] != self.curPlayer))) for x in trainExamples]
 
-    def learn(self, disable_draw_result: bool = False):
+    def learn(self, disable_draw_result: bool = True):
         """
         Performs numIters iterations with numEps episodes of self-play in each
         iteration. After every iteration, it retrains neural network with
@@ -93,8 +93,12 @@ class Coach:
 
                 for eps in range(self.args.numEps):
                     result, train_examples = self.executeEpisode()
-                    if disable_draw_result and result != self.game.DRAW:
-                        print("added training examples")
+                    if disable_draw_result:
+                        if result != self.game.DRAW:
+                            print(f"{result} added training examples")
+                            iterationTrainExamples += train_examples
+                    else:
+                        print(f"{result} added training examples")
                         iterationTrainExamples += train_examples
 
                 # save the iteration examples to the history

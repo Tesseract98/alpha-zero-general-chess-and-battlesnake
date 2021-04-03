@@ -42,8 +42,9 @@ class Arena:
         curPlayer = 1
         board = self.game.getInitBoard()
         it = 0
+        result = 0
         with tqdm(total=2500, position=0, leave=True, desc="episode of a game") as pbar:
-            while self.game.getGameEnded(board, curPlayer) == 0:
+            while result == 0:
                 it += 1
                 if verbose:
                     assert self.display
@@ -57,12 +58,13 @@ class Arena:
                     print(action)
                     assert valids[action] > 0
                 board, curPlayer, _ = self.game.getNextState(board, curPlayer, action)
+                result = self.game.getGameEnded(board, curPlayer)
                 pbar.update(1)
         if verbose:
             assert self.display
-            print("Game over: Turn ", str(it), "Result ", str(self.game.getGameEnded(board, 1)))
+            print("Game over: Turn ", str(it), "Result ", str(result))
             self.display(board)
-        return self.game.getGameEnded(board, 1)
+        return result
 
     def playGames(self, num, verbose=False, training=False):
         """

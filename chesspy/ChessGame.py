@@ -112,7 +112,7 @@ class ChessGame(Game):
             assert np.sum(validMoves) == len(current_allowed_moves)
         return validMoves
 
-    def getGameEnded(self, board, player):
+    def getGameEnded(self, board: chess.Board, player):
         """
         Input:
             board: current board
@@ -123,7 +123,7 @@ class ChessGame(Game):
                small non-zero value for draw.
 
         """
-        r = board.result()
+        r = board.result(claim_draw=True)
         if r == "1-0":
             return player
         elif r == "0-1":
